@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Crossfilter</title>
+</head>
+
+<body>
+	<div>
+		<h1>Open your console....</h1>
+	</div>
+	<script src="crossfilter.v1.min.js"></script>
+	<script src="d3.v3.min.js"></script>
+	<script>
+	var cf = crossfilter([{
+		"date": "03/01/2001 05:50:00",
+		"origin": "MCI",
+		"destination": "MDW",
+		"delay": 8
+	}, {
+		"date": "03/01/2001 06:30:00",
+		"origin": "LAS",
+		"destination": "PHX",
+		"delay": 95
+	}, {
+		"date": "03/01/2001 11:15:00",
+		"origin": "LAX",
+		"destination": "PHX",
+		"delay": 10
+	}, {
+		"date": "03/01/2001 11:15:00",
+		"origin": "ONT",
+		"destination": "PHX",
+		"delay": 0
+	}, {
+		"date": "03/01/2001 11:15:00",
+		"origin": "LAS",
+		"destination": "LAX",
+		"delay": -9
+	}, {
+		"date": "03/01/2001 11:15:00",
+		"origin": "LAX",
+		"destination": "OAK",
+		"delay": 12
+	}, {
+		"date": "03/01/2001 11:25:00",
+		"origin": "ONT",
+		"destination": "SMF",
+		"delay": -8
+	}, {
+		"date": "03/01/2001 11:45:00",
+		"origin": "MDW",
+		"destination": "BNA",
+		"delay": -1
+	}, {
+		"date": "03/01/2001 11:45:00",
+		"origin": "OAK",
+		"destination": "LAX",
+		"delay": -10
+	}, {
+		"date": "03/01/2001 11:45:00",
+		"origin": "LAS",
+		"destination": "LAX",
+		"delay": -11
+	}]);
+
+
+
+	// Apply Delay Dimension
+	var delayDimension = cf.dimension(function(d) {
+		return d.delay;
+	});
+
+	// printData("Top 3 Delayed : ", delayDimension.top(3));
+	// printData("Bottom 3 Delayed : ", delayDimension.bottom(3));
+
+
+
+	// Apply Origin Dimension
+	var originDestinationDimension1 = cf.dimension(function(d) {
+		return d.origin;
+	});
+
+	// printData("Top 3 Origin ", originDestinationDimension1.top(3));
+	// printData("Bottom 3 Origin ", originDestinationDimension1.bottom(3));
+
+
+
+	// Apply Origin and Destination Dimension
+	var originDestinationDimension2 = cf.dimension(function(d) {
+		return d.origin + '-' + d.destination;
+	});
+
+	// printData("Top 3 Origin ", originDestinationDimension2.top(3));
+	// printData("Bottom 3 Origin ", originDestinationDimension2.bottom(3));
+
+
+
+	// Apply Delay greater than 0 in Dimension
+	var isDelayedDimension = cf.dimension(function(d) {
+		return d.delay > 0;
+	});
+
+	// printData("Top 3 Delay Dimension ", isDelayedDimension.top(3));
+	// printData("Bottom 3 Delay Dimension", isDelayedDimension.bottom(3));
+
+
+
+	// Apply filter in delay dimension
+	delayDimension.filter(function(d) {
+		return d > 0
+	});
+
+	// printData("Top 3 Filter Delay Dimension ", delayDimension.top(3));
+	// printData("Bottom 3 Filter Delay Dimension", delayDimension.bottom(3));
+
+
+
+	// Apply filter in origin
+	var originDimension = cf.dimension(function(d) {
+		return d.origin
+	});
+	originDimension.filter(function(d) {
+		return d === 'LAX'
+	});
+
+	printData("Top 3 Filter === LAX in Origin", delayDimension.top(3));
+	printData("Bottom 3 Filter === LAX in Origin", delayDimension.bottom(3));
+
+
+
+
+	// Print data
+	function printData(title, data) {
+		d3.selectAll(data)
+			.each(function(d, i) {
+				console.log(title + " : { origin : " + data[i].origin + ", destination : " + data[i].destination + ", delay : " + data[i].delay + ", date : " + data[i].date + " }");
+			});
+	};
+	</script>
+</body>
+
+</html>
