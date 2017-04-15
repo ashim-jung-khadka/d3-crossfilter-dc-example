@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Chart Example 2</title>
+    <script type="text/javascript" src="../library/d3.v3.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    var data = [30, 70, 110];
+
+    var svgContainer = d3.select("body")
+        .append("svg")
+        .attr("width", 200)
+        .attr("height", 200);
+
+    var circleContainer = svgContainer.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle");
+
+    circleContainer.attr("cx", function(d) {
+            return d;
+        }).attr("cy", function(d) {
+            return d;
+        }).attr("r", 20)
+        .attr("fill", function(d) {
+            if (d === 30) return "red";
+            else if (d === 70) return "blue";
+            else if (d === 110) return "green";
+            else return "white";
+        });
+    </script>
+</body>
+
+</html>

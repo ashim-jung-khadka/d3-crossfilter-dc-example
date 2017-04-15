@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Circle Example</title>
+    <script type="text/javascript" src="../library/d3.v3.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    var circleRadius = [40, 20, 10];
+    var svgContainer = d3.select("body")
+        .append("svg")
+        .attr("width", "200")
+        .attr("height", "200");
+
+    var circleContainer = svgContainer.selectAll("circle")
+        .data(circleRadius)
+        .enter()
+        .append("circle");
+
+    circleContainer.attr("cx", 50)
+        .attr("cy", 50)
+        .attr("r", function(d) {
+            return d;
+        })
+        .attr("fill", function(d) {
+            if (d === 40) return 'red';
+            else if (d === 10) return "green";
+            else if (d === 20) return "blue";
+            else return "white";
+        });
+    </script>
+</body>
+
+</html>

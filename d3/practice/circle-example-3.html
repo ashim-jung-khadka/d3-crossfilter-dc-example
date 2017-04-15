@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Circle Example 3</title>
+    <script type="text/javascript" src="../library/d3.v3.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    var dataset = [5, 10, 15, 20, 25];
+    var w = 500;
+    var h = 200;
+
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    var g1 = svg.append("g");
+
+    var circle1 = g1.selectAll("circle")
+        .data(dataset)
+        .enter()
+        .append("circle");
+
+    circle1.attr("cx", function(d, i) {
+            return (i * 50) + 25;
+        })
+        .attr("cy", h / 5)
+        .attr("r", function(d) {
+            return d;
+        });
+
+    var g2 = svg.append("g");
+
+    var circle2 = g2.selectAll("circle")
+        .data(dataset)
+        .enter()
+        .append("circle");
+
+    circle2.attr("cx", function(d, i) {
+            return (i * 50) + 25;
+        })
+        .attr("cy", h / 2)
+        .attr("r", function(d) {
+            return d;
+        })
+        .attr("fill", "yellow")
+        .attr("stroke", "orange")
+        .attr("stroke-width", function(d) {
+            return d / 2;
+        });
+    </script>
+</body>
+
+</html>

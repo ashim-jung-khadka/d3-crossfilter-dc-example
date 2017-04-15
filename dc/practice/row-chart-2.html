@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Row Chart</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../library/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../library/dc.css" media="screen" />
+</head>
+
+<body>
+    <div class="container">
+        <div id="ubc-graph"></div>
+
+        <script src="../library/d3.js"></script>
+        <script src="../library/crossfilter.js"></script>
+        <script src="../library/dc.js"></script>
+        
+        <script type="text/javascript">
+        var countries = ["Russia", "USA", "Ukraine"];
+        var chartExample = {
+            initChart: function(data) {
+                var chart = dc.rowChart("#ubc-graph");
+
+                var ndx = crossfilter(data),
+                    countryDimension = ndx.dimension(function(d) {
+                        return d.country;
+                    }),
+                    countryGroup = countryDimension.group().reduceSum(function(d) {
+                        return d.users;
+                    });
+
+                chart.width(500)
+                    .height(400)
+                    .dimension(countryDimension)
+                    .group(countryGroup);
+
+                dc.renderAll();
+
+                function AddXAxis(chartToUpdate, displayText) {
+                    chartToUpdate.svg()
+                        .append("text")
+                        .attr("class", "x-axis-label")
+                        .attr("text-anchor", "middle")
+                        .attr("x", chartToUpdate.width() / 2)
+                        .attr("y", chartToUpdate.height())
+                        .text("test");
+                }
+                AddXAxis(chart, "Number of Users");
+            },
+            initData: function() {
+                var data = [];
+
+                for (var i = 0; i < 100; i++) {
+                    var country = countries[Math.floor((Math.random() * countries.length))];
+                    var userCount = Math.floor(Math.random() * 100);
+                    data.push({
+                        country: country,
+                        users: userCount
+                    });
+                }
+                chartExample.initChart(data);
+            }
+        };
+
+        chartExample.initData();
+        </script>
+    </div>
+</body>
+
+</html>

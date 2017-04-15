@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>D3 Gauge Example</title>
+
+	<style>
+		body {
+			background-color: #ccc;
+			width: 100%;
+			font-family: 'Roboto', sans-serif;
+			width: 300px;
+			height: 100%;
+		}
+		
+		.widget {
+			width: 284px;
+			margin-top: 50px;
+			margin-left: 50px;
+			background-color: #fff;
+			-background-color: #222D3A;
+			border-radius: 5px;
+			box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.3);
+		}
+		
+		.widget:hover {
+			opacity: 1;
+		}
+		
+		.chart-container {
+			padding: 25px;
+		}
+		
+		.tool-tip {
+			position: relative;
+			display: inline-block;
+		}
+		
+		.tool-tip .tooltiptext {
+			visibility: hidden;
+			width: 208px;
+			background-color: black;
+			color: #fff;
+			border-radius: 6px;
+			padding: 5px 0;
+			position: absolute;
+			z-index: 1;
+			top: 0;
+			left: 90%;
+			padding: 12px;
+			padding-left: 17px;
+		}
+		
+		.tool-tip .tooltiptext::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			right: 100%;
+			margin-top: -5px;
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent black transparent transparent;
+		}
+		
+		.tool-tip:hover .tooltiptext {
+			visibility: visible;
+		}
+		
+		.header {
+			font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+			font-size: 25px;
+		}
+		
+		.content {
+			font-family: Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+			font-size: 50px;
+		}
+	</style>
+
+</head>
+<body>
+
+	<div class="widget">
+		<div id="chart" class="chart-container tool-tip">
+			<span class="tooltiptext">
+					Total PMPM is 20% above Norm:
+					<br/>Medical - 30% above
+					<br/>Pharmacy - 15% below
+				</span>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="../../library/d3.v3.min.js"></script>
+
+	<script type="text/javascript">
+		var label = "Financial";
+		var percent = 50;
+
+		var ratio = percent / 100;
+
+		var pie = d3.layout.pie()
+			.value(function(d) {
+				return d
+			})
+			.sort(null);
+
+		var w = 230,
+			h = 120;
+
+		var outerRadius = 115;
+		var innerRadius = 100;
+
+		var color = ['#ececec', '#f06b3e', '#888888'];
+
+		var colorOld = '#F00';
+		var colorNew = '#0F0';
+
+		var arc = d3.svg.arc()
+			.innerRadius(innerRadius)
+			.outerRadius(outerRadius)
+			.startAngle(0)
+			.endAngle(Math.PI);
+
+		var arcLine = d3.svg.arc()
+			.innerRadius(innerRadius)
+			.outerRadius(outerRadius)
+			.startAngle(0);
+
+		var svg = d3.select("#chart")
+			.append("svg")
+			.attr({
+				width: w,
+				height: h,
+				class: 'shadow'
+			}).append('g')
+			.attr({
+				transform: 'translate(' + (w / 2) + ',' + (h - 2) + ')'
+			});
+
+		var path = svg.append('path')
+			.attr({
+				d: arc,
+				transform: 'rotate(-90)'
+			}).attr({
+				'stroke-width': "1",
+				stroke: "#666666"
+			})
+			.style({
+				fill: color[0]
+			});
+
+		var pathForeground = svg.append('path')
+			.datum({
+				endAngle: 0
+			})
+			.attr({
+				d: arcLine,
+				transform: 'rotate(-90)'
+			})
+			.style({
+				fill: function(d, i) {
+					return color[1];
+				}
+			});
+
+		var middleLabel = svg.append('text')
+			.datum(label)
+			.text(function(d) {
+				return d;
+			})
+			.attr({
+				class: 'header',
+				'text-anchor': 'middle',
+				dy: -60,
+				dx: 0
+			})
+			.style({
+				fill: d3.rgb('#000000'),
+			});
+
+		var middleCount = svg.append('text')
+			.datum(0)
+			.text(function(d) {
+				return d;
+			})
+			.attr({
+				class: 'content',
+				'text-anchor': 'middle',
+				dy: -12,
+				dx: 5
+			})
+			.style({
+				fill: function(d, i) {
+					return color[1];
+				}
+			});
+
+		var oldValue = 0;
+		var arcTween = function(transition, newValue, oldValue) {
+			transition.attrTween("d", function(d) {
+				var interpolate = d3.interpolate(d.endAngle, ((Math.PI)) * (newValue / 100));
+
+				var interpolateCount = d3.interpolate(oldValue, newValue);
+
+				return function(t) {
+					d.endAngle = interpolate(t);
+					middleCount.text(Math.floor(interpolateCount(t)) + '%');
+
+					return arcLine(d);
+				};
+			});
+		};
+
+		pathForeground.transition()
+			.duration(750)
+			.ease('cubic')
+			.call(arcTween, percent, oldValue);
+	</script>
+
+</body>
+</html>

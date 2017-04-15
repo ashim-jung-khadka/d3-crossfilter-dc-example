@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>D3 Row Chart</title>
+    <script type="text/javascript" src="../library/d3.v3.min.js"></script>
+	<style>
+	body {
+		font: 14px/1.45 Helvetica;
+	}
+	
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+	
+	rect {
+		fill: steelblue;
+	}
+	</style>
+</head>
+
+<body>
+	<div id="chart"></div>
+	<script type="text/javascript">
+	var data = [{
+		subject: 'Subject 1',
+		value: 3.88
+	}, {
+		subject: 'Subject 2',
+		value: 2.5
+	}, {
+		subject: 'Subject 3',
+		value: 5
+	}, {
+		subject: 'Subject 4',
+		value: 1.75
+	}, {
+		subject: 'Subject 5',
+		value: 0.5
+	}, ];
+
+	// Dimensions
+	var margin = {
+			top: 20,
+			right: 20,
+			bottom: 20,
+			left: 100
+		},
+		width = parseInt(d3.select('#chart').style('width'), 10),
+		width = width - margin.left - margin.right,
+		height = 500 - margin.top - margin.bottom,
+		barHeight = 40,
+		percent = d3.format('%');
+
+	// Create the scale for the axis
+	var xScale = d3.scale.linear()
+		.range([0, width]); // the pixel range to map to
+
+	var yScale = d3.scale.ordinal()
+		// SECOND PARAM IS PADDING
+		.rangeRoundBands([0, height], 0.5);
+
+	// Create the axis
+	var xAxis = d3.svg.axis()
+		.scale(xScale)
+		.orient('bottom')
+		.ticks(5);
+
+	var yAxis = d3.svg.axis()
+		.scale(yScale)
+		.orient('left');
+
+	xScale.domain([0, 5]); // min/max extent of your data (this is usually dynamic e.g. max)
+	yScale.domain(data.map(function(d) {
+		return d.subject;
+	}));
+
+	// Render the SVG
+	var svg = d3.select('#chart')
+		.append('svg')
+		.attr('height', height + margin.top + margin.bottom)
+		.append('g') // Group the content and add margin
+		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+	// Render the axis
+	svg.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', 'translate(0,' + height + ')')
+		.call(xAxis);
+
+	svg.append("g")
+		.attr("class", "y axis")
+		.call(yAxis);
+
+	// Render the bars
+	svg.selectAll('.bar')
+		.data(data)
+		.enter()
+		.append('rect')
+		.attr('class', 'bar')
+		.attr('y', function(d) {
+			return yScale(d.subject);
+		})
+		.attr('width', function(d) {
+			return xScale(d.value)
+		})
+		// REPLACE barHeight WITH RANGE BAND
+		.attr('height', yScale.rangeBand);
+	</script>
+</body>
+
+</html>
